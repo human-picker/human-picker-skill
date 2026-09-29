@@ -22,6 +22,20 @@
 - 需要品牌授权或商标准确性的图形
 - 用户已经明确指定具体图标库和图标名的情况
 
+## 安装
+
+`svg-picker` 是 Python CLI 工具，通过 `pip` 安装，不是 Node/npm 包。
+
+```bash
+pip install svg-picker
+```
+
+开发模式安装：
+
+```bash
+pip install -e /path/to/svg-picker
+```
+
 ## 基本命令
 
 ```bash

@@ -64,9 +64,16 @@ Examples:
 - select an icon for an action;
 - compare generated HTML options before implementing the selected direction.
 
-## Notes
+## Picker tool installation
 
-This repository contains the skill instructions only. The actual picker tools should be installed separately when needed.
+This repository contains the skill instructions only. The actual picker tools are Python CLI packages installed with `pip`, not Node/npm packages.
+
+```bash
+pip install web-picker
+pip install svg-picker
+```
+
+Install only the picker tools you need. Future picker integrations may have their own installation methods.
 
 ---
 
@@ -136,6 +143,13 @@ git clone https://github.com/human-picker/human-picker-skill.git .agents/skills/
 - 为某个操作选择图标；
 - 在正式实现前比较多个 HTML 方案。
 
-## 注意
+## Picker 工具安装
 
-这个仓库只包含 skill 指令本身。实际的 picker 工具需要按需另行安装。
+这个仓库只包含 skill 指令本身。实际的 picker 工具是通过 `pip` 安装的 Python CLI 工具，不是 Node/npm 包。
+
+```bash
+pip install web-picker
+pip install svg-picker
+```
+
+只需要安装你实际会用到的 picker 工具。未来新增的 picker 集成可能会有各自的安装方式。

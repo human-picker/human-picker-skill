@@ -22,6 +22,26 @@
 - 非视觉类选择
 - 超过 9 个候选方案
 
+## 安装
+
+`web-picker` 是 Python CLI 工具，通过 `pip` 安装，不是 Node/npm 包。
+
+```bash
+pip install web-picker
+```
+
+开发模式安装：
+
+```bash
+pip install -e /path/to/web-picker
+```
+
+如果遇到 `QtWebEngineWidgets is not available in this install`，通常需要补装：
+
+```bash
+pip install PySide6-Addons
+```
+
 ## 基本命令
 
 ```bash

@@ -16,10 +16,10 @@ Use human visual judgment for small, reversible design decisions during AI-assis
 
 `human-picker` is a skill for deciding when and how to ask a human to visually choose between generated options instead of forcing the AI to guess.
 
-It coordinates two tools:
+It coordinates picker tools. The current tools are Python CLI packages installed with `pip`, not Node/npm packages:
 
-- `web-picker`: compare rendered HTML variants and return the selected file path. See [`references/web-picker.md`](references/web-picker.md).
-- `svg-picker`: search Iconify icons and return selected SVG source. See [`references/svg-picker.md`](references/svg-picker.md).
+- `web-picker`: compare rendered HTML variants and return the selected file path. Install with `pip install web-picker`. See [`references/web-picker.md`](references/web-picker.md).
+- `svg-picker`: search Iconify icons and return selected SVG source. Install with `pip install svg-picker`. See [`references/svg-picker.md`](references/svg-picker.md).
 
 Chinese reading version: [`SKILL_zh.md`](SKILL_zh.md).
 

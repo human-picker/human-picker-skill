@@ -1,27 +1,20 @@
-# human-picker skill
+# human-picker skills
 
-用于在 AI 辅助开发过程中，让人类对小型、可逆的视觉决策进行选择的 Agent skill。
+Claude Code / Agent Skills 合集 —— 在 AI 辅助开发中，让人类对小型、可逆的视觉与音频决策做选择。
 
-English: [README.md](README.md)
+英文文档：[README.md](README.md)
 
-`human-picker` 是一个 human-in-the-loop 视觉决策 skill。它帮助 AI 编程 Agent 判断：什么时候不应该继续猜，而应该让人类从视觉方案中选择。
+仓库里每个 skill 对应一个 picker 工具。它们互相独立，只安装你需要的就行。
 
-## 它做什么
+## 包含的 skill
 
-这个 skill 会指导 AI Agent：
+| Skill | CLI | 适用场景 |
+|---|---|---|
+| [`svg-picker/SKILL.md`](svg-picker/SKILL.md) | `pip install svg-picker` | 通过关键词从 Iconify 选图标 |
+| [`web-picker/SKILL.md`](web-picker/SKILL.md) | `pip install web-picker` | 在 2-9 个 HTML 渲染方案中选一个 |
+| [`audio-picker/SKILL.md`](audio-picker/SKILL.md) | `pip install audio-picker`（待发布） | 用耳朵挑音效或音频素材 |
 
-- 识别小型视觉决策点；
-- 生成或准备清晰的候选方案；
-- 调用合适的 picker 工具；
-- 尊重用户取消；
-- 根据用户选择继续后续实现。
-
-当前包含的 picker 参考文档：
-
-- `web-picker`：用于比较 HTML/UI 渲染方案。
-- `svg-picker`：用于可视化选择 SVG 图标。
-
-这个 skill 是可扩展的。未来可以继续添加更多 picker 工具，只需要增加新的参考文档，不需要改变核心思想。
+三者一起覆盖"小型、判断密集"决策的全家桶 —— 视觉、音频、HTML 分别对应。
 
 ## 仓库结构
 
@@ -29,51 +22,64 @@ English: [README.md](README.md)
 human-picker-skill/
 ├── README.md
 ├── README_zh.md
-├── SKILL.md
-└── references/
-    ├── web-picker.md
-    └── svg-picker.md
+├── svg-picker/
+│   └── SKILL.md
+├── audio-picker/
+│   └── SKILL.md
+└── web-picker/
+│   └── SKILL.md
 ```
 
-`SKILL.md` 是真正的 skill 入口文件。`references/` 下的文件是具体工具的使用说明。
+每个 skill 目录都是自包含的：只有一个 `SKILL.md`，里面有 agent runtime 需要的 YAML frontmatter。**没有 umbrella skill** —— agent runtime 会根据每个 skill 自己的 `description` 字段自动匹配用户的任务。
 
 ## 安装
 
-把这个仓库复制或克隆到你的 Agent runtime 支持的 skills 目录中。
+克隆这个仓库，然后把你想要的 skill 软链到 agent runtime 的 skills 目录。
 
-对于 Pi / Agent Skills 兼容运行时，常见位置包括：
+Claude Code 以及兼容 Agent Skills 协议的 runtime，常见位置：
 
 ```text
-.agents/skills/human-picker/
-~/.agents/skills/human-picker/
+.claude/skills/
+~/.claude/skills/
+.agents/skills/
+~/.agents/skills/
 ```
 
-示例：
+示例：三个 skill 全部安装：
 
 ```bash
-git clone https://github.com/human-picker/human-picker-skill.git .agents/skills/human-picker
+git clone https://github.com/human-picker/human-picker-skill.git /tmp/hp
+ln -s /tmp/hp/svg-picker    ~/.claude/skills/svg-picker
+ln -s /tmp/hp/audio-picker  ~/.claude/skills/audio-picker
+ln -s /tmp/hp/web-picker    ~/.claude/skills/web-picker
 ```
 
-然后重载或重启你的 Agent runtime，让它重新发现 skill。
-
-## 使用场景
-
-当任务中出现小型视觉选择时，可以让 Agent 加载或使用 `human-picker` skill。
-
-例如：
-
-- 在多个 landing page 首屏 mockup 中选择；
-- 选择按钮、卡片等 UI 视觉样式；
-- 为某个操作选择图标；
-- 在正式实现前比较多个 HTML 方案。
-
-## Picker 工具安装
-
-这个仓库只包含 skill 指令本身。实际的 picker 工具是通过 `pip` 安装的 Python CLI 工具，不是 Node/npm 包。
+只要一个（比如只要 `svg-picker`）：
 
 ```bash
-pip install web-picker
+ln -s /tmp/hp/svg-picker ~/.claude/skills/svg-picker
+```
+
+软链完之后，重启或重载 agent runtime，让它重新扫描 skills 目录。
+
+## Picker 工具的安装
+
+每个 skill 都引用一个独立的 Python CLI 包，通过 `pip` 安装。Skill 文件只描述 CLI 契约，真正的工具代码在各自的仓库：
+
+```bash
 pip install svg-picker
+pip install web-picker
+# pip install audio-picker   # 等发布
 ```
 
-只需要安装你实际会用到的 picker 工具。未来新增的 picker 集成可能会有各自的安装方式。
+只装你启用了 skill 的那个工具。
+
+## AI 怎么用这些 skill
+
+每个 `SKILL.md` 包含：
+
+- YAML frontmatter 里的 `description` 字段 —— agent runtime 用它判断什么时候自动加载这个 skill。
+- Usage 段 —— 讲 CLI 怎么调，stdout / stderr 长什么样。
+- 取消处理原则 —— 告诉 AI 在人类没点 Confirm 直接关窗时**不要**静默选用默认值。
+
+AI 会拿用户的任务去匹配每个 skill 的 description，按需加载。你不需要手动告诉 agent 加载哪个 skill，runtime 自己会判断。

@@ -1,27 +1,20 @@
-# human-picker skill
+# human-picker skills
 
-Agent skill for asking humans to make small, reversible visual choices during AI-assisted development.
+A bundle of Claude Code / Agent Skills for asking humans to make small, reversible visual and audio decisions during AI-assisted development.
 
 中文文档: [README_zh.md](README_zh.md)
 
-`human-picker` is a human-in-the-loop visual decision skill. It helps AI coding agents know when to stop guessing and ask a human to choose between visual options.
+Each skill in this repository targets a single picker tool. They are independent — install only the ones you need.
 
-## What it does
+## Skills included
 
-This skill guides an AI agent to:
+| Skill | CLI | When to use |
+|---|---|---|
+| [`svg-picker/SKILL.md`](svg-picker/SKILL.md) | `pip install svg-picker` | Pick a UI icon by keyword from Iconify. |
+| [`web-picker/SKILL.md`](web-picker/SKILL.md) | `pip install web-picker` | Pick between 2-9 rendered HTML variants. |
+| [`audio-picker/SKILL.md`](audio-picker/SKILL.md) | `pip install audio-picker` *(coming soon)* | Pick a sound effect or audio clip by ear. |
 
-- identify small visual decision points;
-- generate or prepare clear candidates;
-- call an appropriate picker tool;
-- respect human cancellation;
-- continue implementation based on the selected result.
-
-Current picker references include:
-
-- `web-picker` — compare rendered HTML/UI variants.
-- `svg-picker` — choose SVG icons visually.
-
-The skill is intentionally extensible. Future picker tools can be added as additional reference documents without changing the core idea.
+Together they cover the "small, judgment-heavy decision" family — visual, audio, and HTML respectively.
 
 ## Repository structure
 
@@ -29,51 +22,64 @@ The skill is intentionally extensible. Future picker tools can be added as addit
 human-picker-skill/
 ├── README.md
 ├── README_zh.md
-├── SKILL.md
-└── references/
-    ├── web-picker.md
-    └── svg-picker.md
+├── svg-picker/
+│   └── SKILL.md
+├── audio-picker/
+│   └── SKILL.md
+└── web-picker/
+│   └── SKILL.md
 ```
 
-`SKILL.md` is the actual skill entry point. The files under `references/` contain tool-specific usage notes.
+Each skill folder is self-contained: it has exactly one `SKILL.md` with the YAML frontmatter the agent runtime needs. There is no umbrella skill — the agent runtime auto-matches each skill's `description` field against the user's task.
 
 ## Install
 
-Copy or clone this repository into a skills directory supported by your agent runtime.
+Clone this repository, then symlink the skills you want into your agent runtime's skills directory.
 
-For Pi / Agent Skills compatible runtimes, common locations include:
+For Claude Code and Agent Skills compatible runtimes, common locations include:
 
 ```text
-.agents/skills/human-picker/
-~/.agents/skills/human-picker/
+.claude/skills/
+~/.claude/skills/
+.agents/skills/
+~/.agents/skills/
 ```
 
-Example:
+Example: install all three skills:
 
 ```bash
-git clone https://github.com/human-picker/human-picker-skill.git .agents/skills/human-picker
+git clone https://github.com/human-picker/human-picker-skill.git /tmp/hp
+ln -s /tmp/hp/svg-picker    ~/.claude/skills/svg-picker
+ln -s /tmp/hp/audio-picker  ~/.claude/skills/audio-picker
+ln -s /tmp/hp/web-picker    ~/.claude/skills/web-picker
 ```
 
-Then reload or restart your agent runtime so it can discover the skill.
+Or install only one (e.g. just `svg-picker`):
 
-## Usage
+```bash
+ln -s /tmp/hp/svg-picker ~/.claude/skills/svg-picker
+```
 
-When the task involves a small visual choice, invoke or allow the agent to load the `human-picker` skill.
-
-Examples:
-
-- choose between several landing page hero mockups;
-- pick a button or card visual style;
-- select an icon for an action;
-- compare generated HTML options before implementing the selected direction.
+After symlinking, reload or restart your agent runtime so it discovers the new skills.
 
 ## Picker tool installation
 
-This repository contains the skill instructions only. The actual picker tools are Python CLI packages installed with `pip`, not Node/npm packages.
+Each skill references a separate Python CLI package installed with `pip`. The skills describe the tool's CLI contract; the tools themselves live in their own repositories:
 
 ```bash
-pip install web-picker
 pip install svg-picker
+pip install web-picker
+# pip install audio-picker   # once released
 ```
 
-Install only the picker tools you need. Future picker integrations may have their own installation methods.
+Install only the picker tools whose skills you enabled.
+
+## How the AI uses these skills
+
+Each `SKILL.md` contains:
+
+- A `description` field in YAML frontmatter — your agent runtime uses this to decide when to auto-load the skill.
+- A usage section explaining the CLI invocation and what stdout / stderr look like.
+- A cancellation policy telling the AI not to silently fall back to a default when the human closes the picker window without confirming.
+
+The AI matches the user's task against each skill's description and loads the relevant skill(s) on demand. You do not need to instruct the agent to load a specific skill — the runtime does that automatically.

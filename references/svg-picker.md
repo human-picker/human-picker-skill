@@ -39,27 +39,40 @@ pip install -e /path/to/svg-picker
 ## 基本命令
 
 ```bash
-svg-picker <keyword>
+svg-picker <关键词> [<关键词> ...] [--theme cream|sky|dark] [--per-page N]
 ```
 
 示例：
 
 ```bash
 svg-picker home
-svg-picker search --theme dark
-svg-picker settings --theme sky
-svg-picker arrow --per-page 20
+svg-picker home --theme sky
+svg-picker search -t dark
+svg-picker settings --per-page 20
+
+# 一次传多个近义关键词，用户可以在窗口内切换：
+svg-picker home house dwelling
+svg-picker sword blade katana claymore
 ```
 
 常用参数：
 
-- `--theme cream|sky|dark`：选择界面主题。
+- `--theme cream|sky|dark`：选择界面主题。窗口内点击 🎨 按钮可实时循环切换，无需重启。
 - `--per-page N`：每页显示多少个图标。
+
+## 多关键词与窗口内切换
+
+svg-picker 1.1+ 支持一次传入多个关键词，标题栏出现一个 `Search: <当前关键词> ▾` 下拉按钮：
+
+- **切换**：点击下拉中的关键词按钮即可查询新的；当前页、选中、缓存都会重置。
+- **临时新增**：在下拉底部的输入框里敲新关键词 + `Enter`（或点 **+**），立刻把它加进列表并查询。
+
+这样如果第一个关键词搜出来的图标不好用，用户不用关窗、不用让你重跑，AI 也不会白白浪费一轮 reject。
 
 ## AI Agent 使用流程
 
-1. 根据语义选择一个清晰的英文关键词。
-2. 运行 `svg-picker <keyword>`。
+1. 根据语义选择一个（或一组近义）英文关键词。
+2. 运行 `svg-picker <关键词...>`。
 3. 等待用户选择并确认。
 4. 从 stdout 读取 SVG 源码。
 5. 将 SVG 嵌入代码或保存为资源文件。
